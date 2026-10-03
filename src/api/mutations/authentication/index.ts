@@ -5,6 +5,7 @@ import { JellifyUser } from '../../../types/JellifyUser'
 import { useApi, useJellifyUser } from '../../../stores/auth'
 import authenticateUserByName from './utils'
 import { captureError, LoggingContext } from '../../../utils/logging'
+import { exchangeJellyfinTokenForJellyMusic } from '../../../services/jelly-music/client'
 
 interface AuthenticateUserByNameMutation {
 	onSuccess?: () => void
@@ -27,6 +28,10 @@ const useAuthenticateUserByName = ({ onSuccess, onError }: AuthenticateUserByNam
 			}
 
 			setUser(user)
+
+			void exchangeJellyfinTokenForJellyMusic(user.accessToken).catch((error) => {
+				console.debug('[Jelly Music] SSO exchange failed', error)
+			})
 
 			if (onSuccess) onSuccess()
 		},
