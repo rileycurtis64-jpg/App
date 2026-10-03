@@ -1,10 +1,7 @@
 import uuid from 'react-native-uuid'
 import { TrackItem } from 'react-native-nitro-player'
 import getTrackDto from '../../utils/mapping/track-extra-payload'
-import {
-	isJellyMusicConfigured,
-	reportJellyMusicHistory,
-} from './client'
+import { isJellyMusicConfigured, reportJellyMusicHistory } from './client'
 import { getJellyMusicSessionToken } from './auth'
 
 type ActiveTelemetrySession = {
@@ -23,9 +20,7 @@ function canReport(): boolean {
 	return isJellyMusicConfigured() && Boolean(getJellyMusicSessionToken())
 }
 
-function safeReport(
-	event: Parameters<typeof reportJellyMusicHistory>[0],
-): void {
+function safeReport(event: Parameters<typeof reportJellyMusicHistory>[0]): void {
 	if (!canReport()) return
 
 	reportChain = reportChain
@@ -55,9 +50,7 @@ function mapTrack(track: TrackItem) {
 	}
 }
 
-export function startJellyMusicTelemetry(
-	track: TrackItem,
-): void {
+export function startJellyMusicTelemetry(track: TrackItem): void {
 	if (!canReport()) {
 		activeSession = null
 		return
@@ -84,10 +77,7 @@ export function startJellyMusicTelemetry(
 	})
 }
 
-export function progressJellyMusicTelemetry(
-	track: TrackItem,
-	position: number,
-): void {
+export function progressJellyMusicTelemetry(track: TrackItem, position: number): void {
 	if (!activeSession || activeSession.trackId !== String(track.id)) {
 		return
 	}
@@ -118,17 +108,13 @@ export function progressJellyMusicTelemetry(
 	})
 }
 
-export function setJellyMusicPaused(
-	paused: boolean,
-): void {
+export function setJellyMusicPaused(paused: boolean): void {
 	if (!activeSession) return
 
 	activeSession.paused = paused
 }
 
-export function seekJellyMusicTelemetry(
-	position: number,
-): void {
+export function seekJellyMusicTelemetry(position: number): void {
 	if (!activeSession) return
 
 	const normalizedPosition = Math.max(0, Number(position) || 0)
@@ -137,10 +123,7 @@ export function seekJellyMusicTelemetry(
 	activeSession.lastReportedAt = normalizedPosition
 }
 
-export function finishJellyMusicTelemetry(
-	track: TrackItem,
-	reason?: string,
-): void {
+export function finishJellyMusicTelemetry(track: TrackItem, reason?: string): void {
 	if (!activeSession || activeSession.trackId !== String(track.id)) {
 		return
 	}
