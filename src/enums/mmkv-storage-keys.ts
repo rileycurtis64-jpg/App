@@ -25,4 +25,6 @@ export enum MMKVStorageKeys {
 	ReducedHaptics = 'ReducedHaptics',
 	Theme = 'Theme',
 	Playlists = 'Playlists',
+	JellyMusicSessionToken = 'JELLY_MUSIC_SESSION_TOKEN',
+	JellyMusicSessionExpiresAt = 'JELLY_MUSIC_SESSION_EXPIRES_AT',
 }
