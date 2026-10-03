@@ -130,7 +130,9 @@ export async function exchangeJellyfinTokenForJellyMusic(
 	return user
 }
 
-export async function reportJellyMusicHistory(event: JellyMusicHistoryEvent): Promise<void> {
+export async function reportJellyMusicHistory(
+	event: JellyMusicHistoryEvent,
+): Promise<void> {
 	const baseUrl = requireJellyMusicBaseUrl()
 	const token = getJellyMusicSessionToken()
 
