@@ -32,7 +32,14 @@ function safeReport(event: Parameters<typeof reportJellyMusicHistory>[0]): void 
 }
 
 function mapTrack(track: TrackItem) {
-	const dto = getTrackDto(track)
+	let dto: ReturnType<typeof getTrackDto>
+
+	try {
+		dto = getTrackDto(track)
+	} catch (error) {
+		console.debug('[Jelly Music] track metadata parse failed', error)
+		dto = undefined
+	}
 
 	const durationSeconds = dto?.RunTimeTicks
 		? Number(dto.RunTimeTicks) / 10_000_000
