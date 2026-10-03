@@ -10,6 +10,8 @@ import { Api } from '@jellyfin/sdk'
 import { JellyfinInfo } from '../../api/info'
 import AXIOS_INSTANCE from '../../configs/networking/axios.config'
 import { queryClient } from '../../constants/query-client'
+import { clearJellyMusicSession } from '../../services/jelly-music/auth'
+import { resetJellyMusicTelemetry } from '../../services/jelly-music/telemetry'
 
 type JellifyStore = {
 	server: JellyfinServer | undefined
@@ -100,6 +102,8 @@ export const useSignOut = () => {
 		setUser(undefined)
 		setLibrary(undefined)
 
+		resetJellyMusicTelemetry()
+		clearJellyMusicSession()
 		queryClient.clear()
 
 		storage.clearAll()
