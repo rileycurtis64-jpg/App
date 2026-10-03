@@ -10,6 +10,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { getApi, getUser } from '../../../stores/auth/utils'
 import { useJellifyUser } from '../../../stores/auth'
 import Toast from 'react-native-toast-message'
+import { exchangeJellyfinTokenForJellyMusic } from '../../../services/jelly-music/client'
 
 export const useInitiateQuickConnect = () => {
 	const api = getApi()
@@ -84,6 +85,13 @@ const useAuthenticateWithQuickConnect = () => {
 			}
 
 			setUser(user)
+
+			try {
+				await exchangeJellyfinTokenForJellyMusic(user.accessToken)
+			} catch (error) {
+				console.debug('[Jelly Music] Quick Connect SSO exchange failed', error)
+			}
+
 			navigation.navigate('LibrarySelection')
 		},
 		onError: async (error: Error) => {
