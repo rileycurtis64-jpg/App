@@ -20,7 +20,7 @@ const useAuthenticateUserByName = ({ onSuccess, onError }: AuthenticateUserByNam
 		mutationFn: (credentials: JellyfinCredentials) => {
 			return authenticateUserByName(api, credentials.username, credentials.password)
 		},
-		onSuccess: (authResult: AuthenticationResult) => {
+		onSuccess: async (authResult: AuthenticationResult) => {
 			const user: JellifyUser = {
 				id: authResult.User!.Id!,
 				name: authResult.User!.Name!,
@@ -29,9 +29,11 @@ const useAuthenticateUserByName = ({ onSuccess, onError }: AuthenticateUserByNam
 
 			setUser(user)
 
-			void exchangeJellyfinTokenForJellyMusic(user.accessToken).catch((error) => {
+			try {
+				await exchangeJellyfinTokenForJellyMusic(user.accessToken)
+			} catch (error) {
 				console.debug('[Jelly Music] SSO exchange failed', error)
-			})
+			}
 
 			if (onSuccess) onSuccess()
 		},
