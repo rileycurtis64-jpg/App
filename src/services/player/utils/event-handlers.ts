@@ -64,22 +64,36 @@ export async function onTracksNeedUpdate(tracks: TrackItem[], lookahead: number)
  * This is called by the player when the currently playing track changes
  * over to a new one.
  *
- * Updates the `currentIndex` in the {@link usePLayerQueueStore}, which will
+ * Updates the `currentIndex` in the {@link usePlayerQueueStore}, which will
  * update the track being displayed in the player via Zustand.
  *
  * Also reports that playback has either stopped or completed for the previous
- * track, depending on if the user listened past the detection threshold (80%)
+ * track.
  *
  * @param track The {@link TrackItem} the currently playing track
  * @param reason The {@link Reason} for the track changing
  */
 export async function onChangeTrack(track: TrackItem, reason?: Reason) {
-	// Grab snapshot of the previous track and playback position for reporting
 	const { queue, currentIndex: prevIndex } = usePlayerQueueStore.getState()
+	const { position } = usePlayerPlaybackStore.getState()
+
 	const previousTrack = prevIndex !== undefined ? queue[prevIndex] : undefined
 
 	if (previousTrack && previousTrack.id !== track.id) {
-		finishJellyMusicTelemetry(previousTrack, reason)
+		const previousDuration = Number(previousTrack.duration) || 0
+
+		const reachedNaturalEnd =
+			previousDuration > 0 &&
+			position >= Math.max(previousDuration * 0.9, previousDuration - 3)
+
+		const jellyMusicReason =
+			String(reason) === 'skip' && reachedNaturalEnd
+				? 'ended'
+				: reason
+					? String(reason)
+					: 'track_change'
+
+		finishJellyMusicTelemetry(previousTrack, jellyMusicReason)
 	}
 
 	trackMarkedAsListened = false
