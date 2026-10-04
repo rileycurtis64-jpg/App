@@ -154,3 +154,60 @@ export async function reportJellyMusicHistory(
 		throw error
 	}
 }
+
+export type JellyMusicLyricsRequest = {
+	jellyfinItemId: string
+	title: string
+	artist?: string
+	album?: string
+	durationSeconds?: number
+}
+
+export type JellyMusicLyricsResponse = {
+	ok: boolean
+	source?: 'cache' | 'lrclib'
+	cached?: boolean
+	found?: boolean
+	preferredType?: 'synced' | 'plain'
+	lyrics?: {
+		provider?: string
+		provider_id?: string | null
+		synced_lyrics?: string | null
+		plain_lyrics?: string | null
+		instrumental?: number
+	} | null
+	error?: string
+}
+
+export async function fetchJellyMusicLyrics(
+	params: JellyMusicLyricsRequest,
+	signal?: AbortSignal,
+): Promise<JellyMusicLyricsResponse> {
+	const baseUrl = requireJellyMusicBaseUrl()
+	const token = getJellyMusicSessionToken()
+
+	if (!token) {
+		throw new Error('Jelly Music is not authenticated.')
+	}
+
+	try {
+		const response = await AXIOS_INSTANCE.get<JellyMusicLyricsResponse>(
+			`${baseUrl}/api/lyrics`,
+			{
+				params,
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				signal,
+			},
+		)
+
+		return response.data
+	} catch (error: any) {
+		if (error?.response?.status === 401) {
+			clearJellyMusicSession()
+		}
+
+		throw error
+	}
+}
