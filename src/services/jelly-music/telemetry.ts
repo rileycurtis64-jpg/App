@@ -48,8 +48,10 @@ function mapTrack(track: TrackItem) {
 	return {
 		id: dto?.Id ?? String(track.id),
 		title: dto?.Name ?? track.title,
-		albumArtist: dto?.AlbumArtist ?? undefined,
-		artists: dto?.Artists ?? undefined,
+		albumArtist: dto?.AlbumArtist ?? track.artist ?? undefined,
+		artists:
+			dto?.Artists ??
+			(track.artist ? [String(track.artist)] : undefined),
 		album: dto?.Album ?? undefined,
 		track: dto?.IndexNumber ?? undefined,
 		year: dto?.ProductionYear ?? undefined,
