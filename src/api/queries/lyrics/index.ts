@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import LyricsQueryKey from './keys'
 import { isUndefined } from 'lodash'
 import { fetchRawLyrics } from './utils'
@@ -7,9 +7,10 @@ import { useNowPlaying } from 'react-native-nitro-player'
 import { ONE_DAY } from '../../../constants/query-client'
 
 /**
- * A hook that will return a {@link useQuery}
+ * Fetch lyrics for the currently playing track.
  *
- * @returns a {@link UseQueryResult} for the
+ * Jellyfin remains the primary lyrics source.
+ * Jelly Music is used only as a fallback when Jellyfin has no lyrics.
  */
 const useRawLyrics = () => {
 	const api = getApi()
@@ -17,7 +18,7 @@ const useRawLyrics = () => {
 
 	return useQuery({
 		queryKey: LyricsQueryKey(currentTrack),
-		queryFn: ({ signal }) => fetchRawLyrics(api, currentTrack!.id!, signal),
+		queryFn: ({ signal }) => fetchRawLyrics(api, currentTrack!, signal),
 		enabled: !isUndefined(currentTrack),
 		staleTime: (data) => (!isUndefined(data) ? ONE_DAY : 0),
 	})
